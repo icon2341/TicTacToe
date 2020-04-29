@@ -18,20 +18,24 @@ public class Main {
             System.out.println("SELECT MODE");
             System.out.println("1.1 Player Mode");
             System.out.println("2.2 Player Mode");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+
 
             if(userInput == 2){
-
+                clearBoard(Board);
                 boolean gameRunning = true;
                 int selectionParse = 0;
                 int turn = 1; //need to change
                 while(gameRunning){
-
                         System.out.println("PLAYER " + turn + "'s TURN");
                         printBoard(Board);
                         System.out.println("Pick Position [1-9]");
                         printSelectionBoard();
                         boolean validMove = true;
-
                         do{
                             selectionParse = UInput.nextInt();
                             if(checkValidMove(Board, selectionParse) == true){
@@ -65,30 +69,53 @@ public class Main {
                             turn = 1;
                         }
                 }//two player mode
-            } else if(userInput == 1){
+            } else if(userInput == 1){//Single player
+                clearBoard(Board);
                 boolean gameRunning = true;
                 int selectionParse = 0;
                 int turn = 1;
-
-
                 while(gameRunning){
-                   if(turn%2 != 0 ){//player turn
-                       System.out.println("PLAYER TURN");
-                       printBoard(Board);
-                       System.out.println("SELECT POSITION [1-9]");
-                       selectionParse = UInput.nextInt();
-                       insert(selectionParse, Board, turn);
-                       turn++;
-                   } else{//computer turn
-                       System.out.println("COMPUTER TURN");
-                        //place random position that hasnt been chosen before
-                        //verify validity
 
-                       turn++;
-                   }
+                    if(turn == 1){
+                        System.out.println("PLAYER " + turn + "'s TURN");
+                    } else {
+                        System.out.println("PLAYER 2 (COM) TURN");
+                    }
+
+                    printBoard(Board);
+                    if(turn == 1){
+                        System.out.println("Pick Position [1-9]");
+                        printSelectionBoard();
+                        boolean validMove = true;
+
+                        do{
+                            selectionParse = UInput.nextInt();
+                            if(checkValidMove(Board, selectionParse) == true){
+                                validMove = true;
+                            } else {
+                                validMove = false;
+                                System.out.println("ERROR, SELECTION INVALID TRY again [1-9]");
+                                printBoard(Board);
+                            }
+                        }while(validMove == false);
+                        insert(selectionParse, Board, turn);
+                    } else {
+                        computerMove(Board);
+                    }
+
+                    if(winDetector(Board, turn) != 0){
+                        System.out.println("Player " + winDetector(Board, turn) + " won!");
+                        printBoard(Board);
+                        gameRunning = false;
+                    }
+                    if(turn == 1){
+                        turn = 2;
+                    } else {
+                        turn = 1;
+                    }
+                    System.out.println();
+                    System.out.println();
                 }
-                //1 player mode
-
             }
         }
     }
@@ -107,9 +134,29 @@ public class Main {
             }
         }
     }
+    public static void computerMove(int Board[][]){
+
+
+        boolean validMove = true;
+        int randomSelection = (int)(10*Math.random()+1);
+        do{
+            randomSelection = (int)(10*Math.random()+1);
+            if(checkValidMove(Board, randomSelection) == true){
+                validMove = true;
+            } else {
+                validMove = false;
+            }
+        }while(validMove == false);
+
+        insert(randomSelection, Board, 2);
+    }
 
     public static boolean checkValidMove(int Board[][], int selectionNumber){
         boolean isValid = true;
+        if(selectionNumber > 9 || selectionNumber < 1){
+            isValid = false;
+        }
+
         switch(selectionNumber){
             case 1:
                 if(Board[0][0] != 0){
